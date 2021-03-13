@@ -25,10 +25,10 @@
                         <tr>
                           <th style="width:5%">No.</th>
                           <th>Application Name</th>
-                          <th>Faculty</th>
+                          <th style="width:5%">Faculty</th>
                           <th>General Ledger</th>
                           <th>Total</th>
-                          <th>Status</th>
+                          <th style="width:5%">Status</th>
                           <th>Created At</th>
                           <th>Action</th>
                         </tr>
@@ -81,7 +81,256 @@
                 bLengthChange: false,
             });
 
+              $('#DT_application tbody').on('click', '.view', function () {
+                var id = $(this).attr('id');
+                var account_type = "{{auth()->user()->account_type}}";
+                console.log(account_type);
+                    $.ajax({
+                        url:"{{ route('view_application') }}",    //the page containing php script
+                        type: "post",    //request type,
+                        dataType: 'json',
+                        data: {
+                            id: id,
+                        },
+                        success:function(result){
+                            var new_status = "";
+                            if (result[0].status !== "Approved by Dean" && result[0].status !== "Approved by Bursary" && account_type == "faculty") {
+                                var dialog = bootbox.dialog({
+                                    title: "Application - " + result[0].title,
+                                    message: result[0].message,
+                                    size: "large",
+                                    buttons: {
+                                        ok: {
+                                            label: "Edit",
+                                            className: 'btn-info text-white',
+                                            callback: function(){
+                                                location.href = '/budget/' + id + '/edit';
+                                            }
+                                        },
+                                        cancel: {
+                                            label: "Close",
+                                            className: 'btn-outline-secondary btn-icon-text',
+                                            callback: function(){
+                                            }
+                                        },                                
+                                    }
+                                });
+                            } else if (result[0].status == "Pending" && account_type == "dean") {
+                                var dialog = bootbox.dialog({
+                                    title: "Application - " + result[0].title,
+                                    message: result[0].message,
+                                    size: "large",
+                                    buttons: {
+                                        ok: {
+                                            label: "Approve",
+                                            className: 'btn-success text-white',
+                                            callback: function(){
+                                                $.ajax({
+                                                    url:"{{ route('update_application') }}",    //the page containing php script
+                                                    type: "post",    //request type,
+                                                    dataType: 'json',
+                                                    data: {
+                                                        id: id,
+                                                        status: "Approved by Dean",
+                                                        remark: ""
+                                                    },
+                                                    success:function(result){
+                                                        bootbox.alert({
+                                                            message: result,
+                                                            centerVertical: true,
+                                                            callback: function () {
+                                                                location.reload(); 
+                                                            }
+                                                        })
+                                                    }
+                                                });
+                                            }
+                                        },
+                                        confirm: {
+                                            label: "Reject",
+                                            className: 'btn-danger',
+                                            callback: function(){
+                                                bootbox.prompt({
+                                                    title: "Are you sure you want to reject application? Please state your remark.", 
+                                                    centerVertical: true,
+                                                    callback: function(result){ 
+                                                        if (result) {
+                                                            $.ajax({
+                                                                url:"{{ route('update_application') }}",    //the page containing php script
+                                                                type: "post",    //request type,
+                                                                dataType: 'json',
+                                                                data: {
+                                                                    id: id,
+                                                                    status: "Rejected by Dean",
+                                                                    remark: result
+                                                                },
+                                                                success:function(result){
+                                                                    bootbox.alert({
+                                                                        message: result,
+                                                                        centerVertical: true,
+                                                                        callback: function () {
+                                                                            location.reload(); 
+                                                                        }
+                                                                    })
+                                                                }
+                                                            });
+                                                        }
+                                                    }
+                                                });
+                                            }
+                                        },
+                                        cancel: {
+                                            label: "Close",
+                                            className: 'btn-outline-secondary btn-icon-text',
+                                            callback: function(){
+                                            }
+                                        },                                
+                                    }
+                                });
+                            } else if (result[0].status == "Approved by Dean" && account_type == "bursary") {
+                                var dialog = bootbox.dialog({
+                                    title: "Application - " + result[0].title,
+                                    message: result[0].message,
+                                    size: "large",
+                                    buttons: {
+                                        ok: {
+                                            label: "Approve",
+                                            className: 'btn-success text-white',
+                                            callback: function(){
+                                                bootbox.prompt({
+                                                    title: "Are you sure you want to approve application? Please revise the approved total. (Proposed total is: RM" + result[0].total + ")", 
+                                                    centerVertical: true,
+                                                    callback: function(result){ 
+                                                        if (result) {
+                                                            $.ajax({
+                                                                url:"{{ route('update_application') }}",    //the page containing php script
+                                                                type: "post",    //request type,
+                                                                dataType: 'json',
+                                                                data: {
+                                                                    id: id,
+                                                                    status: "Approved by Bursary",
+                                                                    remark: "",
+                                                                    approved_total: result
+                                                                },
+                                                                success:function(result){
+                                                                    bootbox.alert({
+                                                                        message: result,
+                                                                        centerVertical: true,
+                                                                        callback: function () {
+                                                                            location.reload(); 
+                                                                        }
+                                                                    })
+                                                                }
+                                                            });
+                                                        }
+                                                    }
+                                                });
+                                            }
+                                        },
+                                        confirm: {
+                                            label: "Reject",
+                                            className: 'btn-danger',
+                                            callback: function(){
+                                                bootbox.prompt({
+                                                    title: "Are you sure you want to reject application? Please state your remark.", 
+                                                    centerVertical: true,
+                                                    callback: function(result){ 
+                                                        if (result) {
+                                                            $.ajax({
+                                                                url:"{{ route('update_application') }}",    //the page containing php script
+                                                                type: "post",    //request type,
+                                                                dataType: 'json',
+                                                                data: {
+                                                                    id: id,
+                                                                    status: "Rejected by Bursary",
+                                                                    remark: result
+                                                                },
+                                                                success:function(result){
+                                                                    bootbox.alert({
+                                                                        message: result,
+                                                                        centerVertical: true,
+                                                                        callback: function () {
+                                                                            location.reload(); 
+                                                                        }
+                                                                    })
+                                                                }
+                                                            });
+                                                        }
+                                                    }
+                                                });
+                                            }
+                                        },
+                                        cancel: {
+                                            label: "Close",
+                                            className: 'btn-outline-secondary btn-icon-text',
+                                            callback: function(){
+                                            }
+                                        },                                
+                                    }
+                                });
+                            } else {
+                                var dialog = bootbox.dialog({
+                                    title: "Application - " + result[0].title,
+                                    message: result[0].message,
+                                    size: "large",
+                                    buttons: {
+                                        // ok: {
+                                        //     label: "Edit",
+                                        //     className: 'btn-info text-white',
+                                        //     callback: function(){
+                                        //         location.href = '/budget/' + id + '/edit';
+                                        //     }
+                                        // },
+                                        cancel: {
+                                            label: "Close",
+                                            className: 'btn-outline-secondary btn-icon-text',
+                                            callback: function(){
+                                            }
+                                        },                                
+                                    }
+                                });
+                            }
+                        }
+                    });
+                });
 
+              $('#DT_application tbody').on('click', '.delete', function () {
+                var id = $(this).attr('id');
+                  bootbox.confirm({
+                    title: "Confirm delete",
+                    message: "Are you sure you want to delete this application?",
+                    centerVertical: true,
+                    buttons: {
+                        cancel: {
+                            label: '<i class="fa fa-times"></i> Cancel'
+                        },
+                        confirm: {
+                            label: '<i class="fa fa-check"></i> Confirm'
+                        }
+                    },
+                    callback: function (result) {
+                      if (result == true) {
+                        $.ajax({
+                          url:"{{ route('delete_application') }}",    //the page containing php script
+                          type: "post",    //request type,
+                          dataType: 'json',
+                          data: {
+                              id: id,
+                          },
+                          success:function(result){
+                            bootbox.alert({
+                                message: result,
+                                centerVertical: true,
+                                callback: function () {
+                                    location.reload();
+                                }
+                            });
+                          }
+                        });
+                      }
+                    }
+                  });
+                });
             });
         });
     </script>

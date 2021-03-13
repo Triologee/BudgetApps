@@ -26,5 +26,11 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 
 Route::middleware(['auth:sanctum', 'verified'])->get('/new-budget', [ApplicationsController::class, 'create'])->name('new-budget');
 Route::middleware(['auth:sanctum', 'verified'])->post('/new-budget', [ApplicationsController::class, 'store'])->name('applications.store');
+Route::middleware(['auth:sanctum', 'verified'])->get('budget/{id}/edit', [ApplicationsController::class, 'edit'])->name('edit_application');
+
 Route::middleware(['auth:sanctum', 'verified'])->get('/ajax/dt_application', [AjaxController::class, 'dt_application'])->name('dt_application');
+Route::middleware(['auth:sanctum', 'verified'])->post('/ajax/view_application', [AjaxController::class, 'view_application'])->name('view_application');
+Route::middleware(['auth:sanctum', 'verified'])->post('/ajax/update_application', [AjaxController::class, 'update_application'])->name('update_application');
+Route::middleware(['auth:sanctum', 'verified'])->post('/ajax/delete_application', [AjaxController::class, 'delete_application'])->name('delete_application');
+
 

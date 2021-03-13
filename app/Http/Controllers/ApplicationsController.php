@@ -90,9 +90,9 @@ class ApplicationsController extends Controller
      * @param  \App\Models\Application  $application
      * @return \Illuminate\Http\Response
      */
-    public function edit(Application $application)
+    public function edit($id)
     {
-        //
+        return view('edit-budget')->with(['id' => $id]);
     }
 
     /**
@@ -102,9 +102,9 @@ class ApplicationsController extends Controller
      * @param  \App\Models\Application  $application
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Application $application)
+    public function update(Request $request)
     {
-        //
+        
     }
 
     /**
