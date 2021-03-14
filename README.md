@@ -10,3 +10,4 @@ Make sure composer and npm/nodejs related-stuff are installed.
 4. Run ```php artisan key:generate```.
 5. Fill in database credentials in your .env file.
 6. Run ```php artisan migrate```.
+7. You're good to go.
