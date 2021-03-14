@@ -27,10 +27,10 @@
                           <th>Application Name</th>
                           <th style="width:5%">Faculty</th>
                           <th>General Ledger</th>
-                          <th>Total</th>
+                          <th>Total (RM)</th>
                           <th style="width:5%">Status</th>
                           <th>Created At</th>
-                          <th>Action</th>
+                          <th style="width:14%">Action</th>
                         </tr>
                       </thead>
                       <tbody>

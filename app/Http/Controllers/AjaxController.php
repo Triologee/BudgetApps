@@ -15,7 +15,11 @@ class AjaxController extends Controller
 
         if($request->ajax()) {
 
-            $applications = DB::table('applications')->get();
+            if (auth()->user()->faculty == "bursary") {
+                $applications = DB::table('applications')->get();
+            } else {
+                $applications = DB::table('applications')->where('faculty', auth()->user()->faculty)->get();
+            }
             // foreach ($applications as $application) {
             //     // $support->created_at = date("d M Y - g:i A", strtotime($support->created_at));
             //     if ($support->last_updated_by == '0') {
