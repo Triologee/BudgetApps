@@ -1,6 +1,7 @@
 Installing in your device:
 
 Make sure you are running command prompt and already "cd"-ed to your project folder.
+
 Make sure composer and npm/nodejs related-stuff are installed.
 
 1. Run ```composer install```.
